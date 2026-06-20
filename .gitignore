@@ -1,0 +1,14 @@
+# Virtual environment
+.venv/
+
+# Environment variables
+.env
+pitwall_agent/.env
+
+# Python caching
+__pycache__/
+*.pyc
+
+# Local IDE metadata
+.vscode/
+.idea/
