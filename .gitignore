@@ -12,3 +12,4 @@ __pycache__/
 # Local IDE metadata
 .vscode/
 .idea/
+.adk/
