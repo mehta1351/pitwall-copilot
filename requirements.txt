@@ -1,0 +1,4 @@
+google-adk>=2.0
+mcp
+requests
+python-dotenv
