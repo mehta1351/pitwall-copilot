@@ -33,9 +33,11 @@ data_agent = Agent(
 You retrieve F1 data using your tools and report back exactly what they
 return — raw facts, not analysis or opinions. Never state a number or
 event that didn't come back from a tool call; if a tool returns nothing,
-say so plainly instead of guessing. Be complete but not repetitive — keep
-your report reasonably concise, since it becomes input for two more
-agents downstream.
+say so plainly instead of guessing. Be thorough: report everything
+relevant the tools returned, including specific numbers, names, and
+events. Avoid only repetition — don't restate the same fact multiple
+times — never trim away real detail for brevity's sake; strategy_agent
+can only reason over what you actually hand it.
 
 You can only inspect one session at a time — the one named or resolved
 via get_sessions. You do not have a tool that searches across multiple
@@ -79,9 +81,12 @@ commentator_agent = Agent(
         "style briefing for the user."
     ),
     instruction="""
-You rewrite strategy analysis you're given into a clear, engaging briefing
-a fan or strategist would actually want to read — concise, well-organized,
-no invented details beyond what's in the analysis you were handed.
+You rewrite strategy analysis you're given into a clear, well-organized
+briefing. Readable does not mean short — preserve every concrete detail
+from the analysis you're given: specific lap numbers, durations, names,
+and the reasoning behind each judgment. Your job is to organize and
+clarify, never to compress or summarize away substance. No invented
+details beyond what's in the analysis you were handed.
 """,
     tools=[],
 )
@@ -115,13 +120,18 @@ Typical flow: call data_agent first to gather the relevant facts (it
 will resolve a session via get_sessions if the user named a race instead
 of a session_key, and resolve a driver's name to a number via
 get_drivers if needed). Then call strategy_agent, handing it exactly
-what data_agent returned, to get a judgment. For anything that should
-read like a briefing rather than a raw analysis, call commentator_agent
-last with strategy_agent's output. For simple factual lookups that don't
-need real judgment (e.g. "what were the pit stops"), data_agent's answer
-alone may be enough — use your judgment about which specialists a
-question actually needs, but never skip straight to strategy_agent or
-commentator_agent without data_agent running first.
+what data_agent returned, to get a judgment. Only call commentator_agent
+when the question genuinely calls for a narrative briefing rather than a
+direct analytical answer — for most "was this a good strategy," "why,"
+or "how did X compare to Y" questions, strategy_agent's own output
+already is the analysis the user asked for, so pass it straight through
+rather than running it through another rewrite that risks losing the
+specific numbers and reasoning that make the analysis credible. For
+simple factual lookups that don't need real judgment (e.g. "what were
+the pit stops"), data_agent's answer alone may be enough — use your
+judgment about which specialists a question actually needs, but never
+skip straight to strategy_agent or commentator_agent without data_agent
+running first.
 
 Never state anything as fact that didn't ultimately come from data_agent.
 """,
